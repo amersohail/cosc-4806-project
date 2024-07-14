@@ -1,0 +1,42 @@
+.mt-3{
+  margin-top:10px;
+}
+
+.whiteText{
+  color:#fff;
+}
+
+.centerText{
+  text-align:center;
+}
+
+.warningBox{
+  background-color:#ffc107;
+}
+
+.report-font-size {
+    font-size: 2.5rem; 
+}
+.piePadd{
+  padding:2rem!important;
+}
+.buttonMargin{
+  margin:1rem;
+}
+/* Sticky footer styles */
+/* Custom styles for sticky footer */
+html, body {
+    height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+.content {
+    flex: 1;
+}
+footer{
+  background-color: #e9ecef; /* Slightly darker than light */
+  color: #212529;
+  padding: 1rem 0;
+}
