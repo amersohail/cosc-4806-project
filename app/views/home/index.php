@@ -4,7 +4,6 @@
     <div class="page-header" id="banner">
         <div class="row mt-4">
             <div class="col-lg-12">
-                <!-- Search box section -->
                 <div class="container mt-4">
                     <form class="d-flex" action="/search" method="get">
                         <input class="form-control me-2" type="search" name="query" placeholder="Search Movie" aria-label="Search">
