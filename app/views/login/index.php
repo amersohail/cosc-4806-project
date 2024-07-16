@@ -5,9 +5,14 @@
 					<div class="row">
 							<div class="col-lg-12">
 								<h1>Please login</h1>
-							</div>
-					</div>
+								<?php if (isset($_SESSION['error'])): ?>
+										<div class="alert alert-danger">
+												<?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+										</div>
+								<?php endif; ?>
+						</div>
 			</div>
+</div>
 
 <div class="row">
 			<div class="col-4">

@@ -5,7 +5,7 @@
         <div class="row mt-4">
             <div class="col-lg-12">
                 <div class="container mt-4">
-                    <form class="d-flex" action="/search" method="get">
+                    <form class="d-flex" action="/movie/search" method="get">
                         <input class="form-control me-2" type="search" name="query" placeholder="Search Movie" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search Movie</button>
                     </form>
