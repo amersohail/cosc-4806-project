@@ -18,10 +18,24 @@ class Movie extends Controller {
         if (isset($_GET['query'])) {
             $query = $_GET['query'];
             $movie = $this->movieModel->getMovieDetailsByTitle($query);
+            $averageRating = null;
+            $userRating = null;
+
+            if ($movie) {
+                $imdbId = $movie['imdbID'];
+                $averageRating = $this->movieModel->getMovieRatings($imdbId);
+                if ($this->userModel->isAuthenticated()) {
+                    $userId = $_SESSION['user_id'];
+                    $userRating = $this->movieModel->getUserRating($userId, $imdbId);
+                }
+            }
+
             $data = [
                 'movie' => $movie,
                 'isAuthenticated' => $this->userModel->isAuthenticated(),
-                'ratingSubmitted' => isset($_GET['ratingSubmitted']) && $_GET['ratingSubmitted'] == 'true'
+                'ratingSubmitted' => isset($_GET['ratingSubmitted']) && $_GET['ratingSubmitted'] == 'true',
+                'averageRating' => $averageRating['averageRating'],
+                'userRating' => $userRating ? $userRating['rating'] : null
             ];
             $this->view('movie/index', $data);
         } else {
