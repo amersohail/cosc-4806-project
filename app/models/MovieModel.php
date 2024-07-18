@@ -22,5 +22,15 @@ class MovieModel {
 
         return $data;
     }
+
+    public function saveRating($userId, $movieName, $imdbId, $rating) {
+        $db = db_connect();
+        $statement = $db->prepare("INSERT INTO movie_ratings (user_id, movie_name, imdb_id, rating) VALUES (:user_id, :movie_name, :imdb_id, :rating)");
+        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $statement->bindValue(':movie_name', $movieName);
+        $statement->bindValue(':imdb_id', $imdbId);
+        $statement->bindValue(':rating', $rating, PDO::PARAM_STR);
+        $statement->execute();
+    }
 }
 ?>
