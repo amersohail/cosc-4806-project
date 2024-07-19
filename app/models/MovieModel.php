@@ -1,22 +1,24 @@
 <?php
 class MovieModel {
     private $apiUrl = 'http://www.omdbapi.com/';
+    private $youtubeApiUrl = 'https://www.googleapis.com/youtube/v3/search';
+    private $youtubeApiKey;
+
+    public function __construct() {
+        $this->youtubeApiKey = getenv('YOUTUBE_API_KEY');
+    }
 
     public function getMovieDetailsByTitle($title) {
         $apiKey = getenv('OMDB_API_KEY');
-        //echo "API Key: $apiKey<br>"; // Debugging line
         $url = $this->apiUrl . '?apikey=' . $apiKey . '&t=' . urlencode($title);
-        //echo "Request URL: $url<br>"; // Debugging line
 
         $response = file_get_contents($url);
         if ($response === FALSE) {
-            //echo "Failed to get response from OMDB API.<br>"; // Debugging line
             return null;
         }
 
         $data = json_decode($response, true);
         if ($data['Response'] == 'False') {
-            //echo "OMDB API returned an error: " . $data['Error'] . "<br>"; // Debugging line
             return null;
         }
 
@@ -66,6 +68,23 @@ class MovieModel {
         }
 
         $statement->execute();
+    }
+
+    public function getYoutubeTrailer($title) {
+        $url = $this->youtubeApiUrl . '?part=snippet&q=' . urlencode($title . ' trailer') . '&key=' . $this->youtubeApiKey;
+        $response = file_get_contents($url);
+        if ($response === FALSE) {
+            return null;
+        }
+
+        $data = json_decode($response, true);
+        if (empty($data['items'])) {
+            return null;
+        }
+
+        // Get the first video ID
+        $videoId = $data['items'][0]['id']['videoId'];
+        return $videoId;
     }
 }
 ?>

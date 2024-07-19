@@ -3,47 +3,36 @@ require_once 'app/core/Controller.php';
 
 class Movie extends Controller {
     private $movieModel;
-    private $userModel;
-    private $googleGemini;
+    private $userModel; // Explicitly define the userModel property
+    private $googleGemini; // Explicitly define the googleGemini property
 
-    // Constructor to initialize models
     public function __construct() {
         $this->movieModel = $this->model('MovieModel');
         $this->userModel = $this->model('User');
-        $this->googleGemini = $this->model('GoogleGemini');
+        $this->googleGemini = $this->model('GoogleGemini'); // Assuming you have a GoogleGemini model
     }
 
-    // Default index method
     public function index() {
         $this->view('home/index');
     }
 
-    // Method to search for a movie and display its details
     public function search() {
         if (isset($_GET['query'])) {
             $query = $_GET['query'];
             $movie = $this->movieModel->getMovieDetailsByTitle($query);
-            $averageRating = null;
-            $userRating = null;
-            $googleReview = null;
+            $trailer = $this->movieModel->getYoutubeTrailer($query);
 
-            if ($movie) {
-                $imdbId = $movie['imdbID'];
-                $averageRating = $this->movieModel->getMovieRatings($imdbId);
-                if ($this->userModel->isAuthenticated()) {
-                    $userId = $_SESSION['user_id'];
-                    $userRating = $this->movieModel->getUserRating($userId, $imdbId);
-                }
-            }
+            // Get average rating and user rating
+            $averageRating = $this->movieModel->getMovieRatings($movie['imdbID']);
+            $userRating = $this->userModel->isAuthenticated() ? $this->movieModel->getUserRating($_SESSION['user_id'], $movie['imdbID']) : null;
 
-            // Prepare data for the view
             $data = [
                 'movie' => $movie,
                 'isAuthenticated' => $this->userModel->isAuthenticated(),
                 'ratingSubmitted' => isset($_GET['ratingSubmitted']) && $_GET['ratingSubmitted'] == 'true',
-                'averageRating' => $averageRating['averageRating'],
-                'userRating' => $userRating ? $userRating['rating'] : null,
-                'googleReview' => $googleReview
+                'trailer' => $trailer,
+                'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
+                'userRating' => $userRating ? $userRating['rating'] : null
             ];
             $this->view('movie/index', $data);
         } else {
@@ -51,7 +40,6 @@ class Movie extends Controller {
         }
     }
 
-    // Method to handle rating submission
     public function rate() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && $this->userModel->isAuthenticated()) {
             $userId = $_SESSION['user_id'];
@@ -61,7 +49,6 @@ class Movie extends Controller {
 
             $this->movieModel->saveRating($userId, $movieName, $imdbId, $rating);
 
-            // Redirect back to the movie search page with the submitted rating
             $query = urlencode($_POST['query']);
             header("Location: /movie/search?query=$query&ratingSubmitted=true");
             exit();
@@ -91,7 +78,7 @@ class Movie extends Controller {
                     'movie' => $movie,
                     'isAuthenticated' => $this->userModel->isAuthenticated(),
                     'ratingSubmitted' => false,
-                    'averageRating' => $averageRating['averageRating'],
+                    'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
                     'userRating' => $userRating ? $userRating['rating'] : null,
                     'googleReview' => $googleReview
                 ];

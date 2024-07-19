@@ -4,11 +4,11 @@
     <?php if ($data['movie']): ?>
         <div class="row">
             <?php if (!empty($data['movie']['Poster']) && $data['movie']['Poster'] != 'N/A'): ?>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <img src="<?php echo htmlspecialchars($data['movie']['Poster']); ?>" class="img-fluid rounded" alt="Movie Poster">
                 </div>
             <?php endif; ?>
-            <div class="col-md-9">
+            <div class="col-md-8">
                 <div class="card mb-4">
                     <div class="card-body">
                         <h1 class="card-title"><?php echo htmlspecialchars($data['movie']['Title']); ?> (<?php echo htmlspecialchars($data['movie']['Year']); ?>)</h1>
@@ -16,19 +16,11 @@
                         <p class="card-text"><strong>Director:</strong> <?php echo htmlspecialchars($data['movie']['Director']); ?></p>
                         <p class="card-text"><strong>Actors:</strong> <?php echo htmlspecialchars($data['movie']['Actors']); ?></p>
                         <p class="card-text"><strong>Genre:</strong> <?php echo htmlspecialchars($data['movie']['Genre']); ?></p>
-                        <p class="card-text">
-                            <strong>IMDB Rating:</strong>
-                            <a href="https://www.imdb.com/title/<?php echo htmlspecialchars($data['movie']['imdbID']); ?>" target="_blank" style="color: #f5c518;">
-                                <?php echo htmlspecialchars($data['movie']['imdbRating']); ?>
-                            </a>
-                        </p>
-                        <?php if ($data['trailer']): ?>
-                            <div class="trailer mt-4">
-                                <h3 class="card-title">Watch Trailer</h3>
-                                <div class="embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo htmlspecialchars($data['trailer']); ?>" allowfullscreen style="width: 100%; height: 315px;"></iframe>
-                                </div>
-                            </div>
+                        <p class="card-text"><strong>IMDB Rating:</strong> <?php echo htmlspecialchars($data['movie']['imdbRating']); ?></p>
+                        <?php if (!empty($data['movie']['imdbID'])): ?>
+                            <p class="card-text">
+                                <a href="https://www.imdb.com/title/<?php echo htmlspecialchars($data['movie']['imdbID']); ?>" target="_blank" class="btn btn-primary">View on IMDb</a>
+                            </p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -39,15 +31,15 @@
         <div class="row mt-4">
             <div class="col-12">
                 <?php if ($data['isAuthenticated']): ?>
-                    <?php if (isset($data['averageRating']) && $data['averageRating'] !== null): ?>
+                    <?php if ($data['averageRating']): ?>
                         <p>This movie is rated <?php echo round($data['averageRating'], 1); ?>/5 by our users.</p>
                     <?php else: ?>
                         <p>This movie has no ratings.</p>
                     <?php endif; ?>
 
-                    <?php if (isset($data['userRating']) && $data['userRating'] !== null): ?>
+                    <?php if ($data['userRating']): ?>
                         <div class="alert alert-info" role="alert">
-                            You have rated this movie <?php echo htmlspecialchars($data['userRating']); ?>/5.
+                            You have rated this movie <?php echo $data['userRating']; ?>/5.
                         </div>
                     <?php endif; ?>
 
@@ -55,12 +47,12 @@
                         <h3>Give a Rating</h3>
                         <!-- Bootstrap slider for the rating input -->
                         <form action="/movie/rate" method="post">
-                            <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
-                            <input type="hidden" name="movie_name" value="<?php echo htmlspecialchars($data['movie']['Title'] ?? ''); ?>">
-                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query'] ?? ''); ?>">
-                            <input type="range" class="form-range" min="1" max="5" step="0.5" id="ratingRange" name="rating" value="<?php echo isset($data['userRating']) ? htmlspecialchars($data['userRating']) : 3; ?>" oninput="updateRatingValue(this.value)">
+                            <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
+                            <input type="hidden" name="movie_name" value="<?php echo htmlspecialchars($data['movie']['Title']); ?>">
+                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query']); ?>">
+                            <input type="range" class="form-range" min="1" max="5" step="0.5" id="ratingRange" name="rating" value="<?php echo $data['userRating'] ?: 3; ?>" oninput="updateRatingValue(this.value)">
                             <div class="mt-2">
-                                <span>Rating: <span id="ratingValue"><?php echo isset($data['userRating']) ? htmlspecialchars($data['userRating']) : 3; ?></span></span>
+                                <span>Rating: <span id="ratingValue"><?php echo $data['userRating'] ?: 3; ?></span></span>
                             </div>
                             <button type="submit" class="btn btn-primary mt-2">Rate It</button>
                         </form>
@@ -70,8 +62,8 @@
                         <h3>Get a Review</h3>
                         <!-- Button to trigger review generation -->
                         <form action="/movie/getReview" method="post">
-                            <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
-                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query'] ?? ''); ?>">
+                            <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID']); ?>">
+                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query']); ?>">
                             <button type="submit" class="btn btn-secondary mt-2" <?php echo isset($data['googleReview']) ? 'disabled' : ''; ?>>Get Review</button>
                         </form>
                     </div>
@@ -104,11 +96,5 @@
         </div>
     <?php endif; ?>
 </div>
-
-<script>
-    function updateRatingValue(value) {
-        document.getElementById('ratingValue').innerText = value;
-    }
-</script>
 
 <?php require_once 'app/views/templates/footer.php'; ?>
