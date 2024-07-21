@@ -33,7 +33,7 @@ class Movie extends Controller {
                 'trailer' => $trailer,
                 'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
                 'userRating' => $userRating ? $userRating['rating'] : null,
-                'query' => $query // Pass the query parameter to the view
+                'query' => $query // Add query to data
             ];
             $this->view('movie/index', $data);
         } else {
@@ -66,23 +66,32 @@ class Movie extends Controller {
 
             // Get the movie details
             $movie = $this->movieModel->getMovieDetailsByTitle($query);
+            $trailer = $this->movieModel->getYoutubeTrailer($query); // Ensure trailer is fetched
+
             if ($movie) {
-                // Generate the review using Google Gemini
-                $prompt = "Write a review for the movie " . $movie['Title'];
+                // Get average rating
+                $averageRating = $this->movieModel->getMovieRatings($imdbId);
+                $averageRatingValue = $averageRating ? $averageRating['averageRating'] : null;
+
+                // Generate the review using Google Gemini with conditional prompt
+                $prompt = $averageRatingValue ? 
+                    "Please give a review for " . $movie['Title'] . " that has an average rating of " . round($averageRatingValue, 1) . " out of 5." :
+                    "Please give a review for " . $movie['Title'];
+
                 $googleReview = $this->googleGemini->ask($prompt);
 
                 // Prepare data for the view
-                $averageRating = $this->movieModel->getMovieRatings($imdbId);
-                $userRating = $this->userModel->isAuthenticated() ? $this->movieModel->getUserRating($_SESSION['user_id'], $imdbId) : null;
+                $userRating = $this->movieModel->getUserRating($_SESSION['user_id'], $imdbId);
 
                 $data = [
                     'movie' => $movie,
                     'isAuthenticated' => $this->userModel->isAuthenticated(),
                     'ratingSubmitted' => false,
-                    'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
+                    'averageRating' => $averageRatingValue,
                     'userRating' => $userRating ? $userRating['rating'] : null,
                     'googleReview' => $googleReview,
-                    'query' => $query // Pass the query parameter to the view
+                    'trailer' => $trailer, // Add trailer to data
+                    'query' => $query // Add query to data
                 ];
 
                 // Render the view with the updated data

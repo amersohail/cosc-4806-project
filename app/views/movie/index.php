@@ -17,9 +17,8 @@
                         <p class="card-text"><strong>Actors:</strong> <?php echo htmlspecialchars($data['movie']['Actors']); ?></p>
                         <p class="card-text"><strong>Genre:</strong> <?php echo htmlspecialchars($data['movie']['Genre']); ?></p>
                         <p class="card-text">
-                            <strong>IMDB Rating:</strong>
-                            <a href="https://www.imdb.com/title/<?php echo htmlspecialchars($data['movie']['imdbID']); ?>" target="_blank" style="color: #f5c518;">
-                                <?php echo htmlspecialchars($data['movie']['imdbRating']); ?>
+                            <a href="https://www.imdb.com/title/<?php echo htmlspecialchars($data['movie']['imdbID']); ?>" target="_blank" style="color: #f5c518; text-decoration: none;">
+                                <strong>IMDB Rating:</strong> <?php echo htmlspecialchars($data['movie']['imdbRating']); ?>
                             </a>
                         </p>
                         <?php if ($data['trailer']): ?>
@@ -66,15 +65,15 @@
                         </form>
                     </div>
 
-                    <div class="mt-4">
-                        <h3>Get a Review</h3>
-                        <!-- Button to trigger review generation -->
-                        <form action="/movie/getReview" method="post">
-                            <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
-                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($data['query'] ?? ''); ?>">
-                            <button type="submit" class="btn btn-secondary mt-2" <?php echo isset($data['googleReview']) ? 'disabled' : ''; ?>>Get Review</button>
-                        </form>
-                    </div>
+                  <div class="mt-4 mb-4">
+                      <h3>Get a Review</h3>
+                      <!-- Button to trigger review generation -->
+                      <form action="/movie/getReview" method="post">
+                          <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
+                          <input type="hidden" name="query" value="<?php echo htmlspecialchars($data['query'] ?? ''); ?>">
+                          <button type="submit" class="btn btn-secondary mt-2" <?php echo isset($data['googleReview']) ? 'disabled' : ''; ?>>Get Review</button>
+                      </form>
+                  </div>
 
                     <!-- Display review from Google Gemini -->
                     <?php if (isset($data['googleReview'])): ?>
@@ -88,13 +87,13 @@
                             </div>
                         </div>
                     <?php endif; ?>
-             <?php else: ?>
-                 <div class="alert alert-warning mt-4" role="alert">
-                     Please log in to give a rating and get a review.
-                     <br>
-                     <a href="/login?redirect=<?php echo urlencode('/movie/search?query=' . $data['query']); ?>" class="btn btn-warning mt-2">Log In</a>
-                 </div>
-             <?php endif; ?>
+                <?php else: ?>
+                    <div class="alert alert-warning mt-4" role="alert">
+                        Please log in to give a rating and get a review.
+                        <br>
+                        <a href="/login?redirect=<?php echo urlencode('/movie/search?query=' . $data['query']); ?>" class="btn btn-warning mt-2">Log In</a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php else: ?>
