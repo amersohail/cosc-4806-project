@@ -23,6 +23,10 @@
 .buttonMargin{
   margin:1rem;
 }
+.loginBtn{
+  background-color: #E4B721; 
+  border-color: #E4B721;
+}
 /* Sticky footer styles */
 /* Custom styles for sticky footer */
 html, body {

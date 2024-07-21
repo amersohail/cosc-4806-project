@@ -30,20 +30,20 @@
                   </ul>
                   <ul class="navbar-nav ms-auto">
                       <?php if ($user->isAuthenticated()): ?>
-                      <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              <?php echo $_SESSION['username']; ?>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                              <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                          </ul>
-                      </li>
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <?php echo htmlspecialchars($_SESSION['username']); ?>
+                              </a>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                  <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                              </ul>
+                          </li>
                       <?php else: ?>
-                      <li class="nav-item">
-                          <a class="nav-link" href="#">
-                              Guest
-                          </a>
-                      </li>
+                          <li class="nav-item">
+                              <a class="btn btn-primary" href="/login?redirect=<?php echo urlencode($_SERVER['REQUEST_URI']); ?>" style="background-color: #E4B721; border-color: #E4B721;">
+                                  Log In
+                              </a>
+                          </li>
                       <?php endif; ?>
                   </ul>
               </div>

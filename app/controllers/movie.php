@@ -32,7 +32,8 @@ class Movie extends Controller {
                 'ratingSubmitted' => isset($_GET['ratingSubmitted']) && $_GET['ratingSubmitted'] == 'true',
                 'trailer' => $trailer,
                 'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
-                'userRating' => $userRating ? $userRating['rating'] : null
+                'userRating' => $userRating ? $userRating['rating'] : null,
+                'query' => $query // Pass the query parameter to the view
             ];
             $this->view('movie/index', $data);
         } else {
@@ -72,7 +73,7 @@ class Movie extends Controller {
 
                 // Prepare data for the view
                 $averageRating = $this->movieModel->getMovieRatings($imdbId);
-                $userRating = $this->movieModel->getUserRating($_SESSION['user_id'], $imdbId);
+                $userRating = $this->userModel->isAuthenticated() ? $this->movieModel->getUserRating($_SESSION['user_id'], $imdbId) : null;
 
                 $data = [
                     'movie' => $movie,
@@ -80,7 +81,8 @@ class Movie extends Controller {
                     'ratingSubmitted' => false,
                     'averageRating' => $averageRating ? $averageRating['averageRating'] : null,
                     'userRating' => $userRating ? $userRating['rating'] : null,
-                    'googleReview' => $googleReview
+                    'googleReview' => $googleReview,
+                    'query' => $query // Pass the query parameter to the view
                 ];
 
                 // Render the view with the updated data

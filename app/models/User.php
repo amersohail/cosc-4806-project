@@ -41,7 +41,7 @@ class User {
         $statement->execute();
     }
 
-    public function authenticate($username, $password) {
+    public function authenticate($username, $password, $redirect) {
         $username = strtolower($username);
         $db = db_connect();
         $lockoutTime = 60;
@@ -74,7 +74,7 @@ class User {
             $_SESSION['user_id'] = $user['id']; // Store user ID in session
             $_SESSION['role'] = $user['role']; // Store if user is admin in session
             $this->logAttempt($username, 'good');
-            header('Location: /home');
+            header('Location: ' . $redirect);
             exit();
         } else {
             $this->logAttempt($username, 'bad');

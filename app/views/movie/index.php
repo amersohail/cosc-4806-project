@@ -57,7 +57,7 @@
                         <form action="/movie/rate" method="post">
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
                             <input type="hidden" name="movie_name" value="<?php echo htmlspecialchars($data['movie']['Title'] ?? ''); ?>">
-                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query'] ?? ''); ?>">
+                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($data['query'] ?? ''); ?>">
                             <input type="range" class="form-range" min="1" max="5" step="0.5" id="ratingRange" name="rating" value="<?php echo isset($data['userRating']) ? htmlspecialchars($data['userRating']) : 3; ?>" oninput="updateRatingValue(this.value)">
                             <div class="mt-2">
                                 <span>Rating: <span id="ratingValue"><?php echo isset($data['userRating']) ? htmlspecialchars($data['userRating']) : 3; ?></span></span>
@@ -71,7 +71,7 @@
                         <!-- Button to trigger review generation -->
                         <form action="/movie/getReview" method="post">
                             <input type="hidden" name="imdb_id" value="<?php echo htmlspecialchars($data['movie']['imdbID'] ?? ''); ?>">
-                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($_GET['query'] ?? ''); ?>">
+                            <input type="hidden" name="query" value="<?php echo htmlspecialchars($data['query'] ?? ''); ?>">
                             <button type="submit" class="btn btn-secondary mt-2" <?php echo isset($data['googleReview']) ? 'disabled' : ''; ?>>Get Review</button>
                         </form>
                     </div>
@@ -88,11 +88,13 @@
                             </div>
                         </div>
                     <?php endif; ?>
-                <?php else: ?>
-                    <div class="alert alert-warning mt-4" role="alert">
-                        Please log in to give a rating and get a review.
-                    </div>
-                <?php endif; ?>
+             <?php else: ?>
+                 <div class="alert alert-warning mt-4" role="alert">
+                     Please log in to give a rating and get a review.
+                     <br>
+                     <a href="/login?redirect=<?php echo urlencode('/movie/search?query=' . $data['query']); ?>" class="btn btn-warning mt-2">Log In</a>
+                 </div>
+             <?php endif; ?>
             </div>
         </div>
     <?php else: ?>
